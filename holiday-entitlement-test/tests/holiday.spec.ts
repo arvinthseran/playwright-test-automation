@@ -2,7 +2,7 @@ import { test } from '../fixtures/basefixture';
 import { IrregularHrsPage, HolidayBasedOnPage, WorkOutHolidayPage, NoOfDaysWorkedPage, InformationPage } from '../pages/startpage';
 
 test.beforeEach('', async ({ }) => {
-  console.log(`Running ${test.info().title}`);
+  
 });
 
 test('Calculate full leave year', { tag:['@regression', '@fullleaveyear']}, async ({ startPage: startPage }) => {
