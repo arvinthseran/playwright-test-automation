@@ -1,13 +1,18 @@
-name: Playwright Tests
+name: CI Tests for Gov UK Calculate Holiday Entitlement
 on:
   push:
-    branches: [ main, master ]
+    paths:
+      - 'holiday-entitlement-test/**'
   pull_request:
-    branches: [ main, master ]
+    paths:
+      - 'holiday-entitlement-test/**'
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./holiday-entitlement-test
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
