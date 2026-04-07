@@ -9,6 +9,6 @@ test("can open booking page and click Start now", async ({ page }) => {
 
   const choosetypepage = new ChooseTyprOfTestPage(page);
   await choosetypepage.verifyPageLoaded();
-  await choosetypepage.clickCar();  
-
+  await choosetypepage.clickCar();
+    
 });
