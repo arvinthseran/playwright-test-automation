@@ -10,7 +10,7 @@ export class StartPage extends BasePage {
   }
 
   async navigate() {
-    await this.page.goto('https://www.gov.uk/calculate-your-holiday-entitlement');
+    await this.page.goto('/calculate-your-holiday-entitlement');
     return this; // Stay on start page after navigation
   }
 

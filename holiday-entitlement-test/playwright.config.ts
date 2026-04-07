@@ -21,32 +21,45 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
+  // Global timeout per test
+  timeout: 30_000,
+
+  // Expect timeout for assertions
+  expect: {
+    timeout: 10_000,
+  },
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['html', { outputFolder: 'playwright-report', open: 'never' }]
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
+    baseURL: 'https://www.gov.uk',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    // Screenshot on failure
+    screenshot: 'only-on-failure',
+
+    // Video on first retry
+    video: 'on-first-retry'
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: 'smoke',
       use: { ...devices['Desktop Chrome'] },
+      testMatch: 'smoke.spec.ts'
     },
 
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: 'regression',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: 'holiday.spec.ts',
+      dependencies:['smoke']
     },
 
     /* Test against mobile viewports. */
