@@ -9,6 +9,7 @@ type HolidayFixtures = {
 export const test = base.extend<HolidayFixtures>({
   // This fixture navigaes to the page and provides the entry point to the application
   startPage: async ({ page }, use) => {
+    console.log(`Running ${test.info().title}`);
     const startPage = new StartPage(page);
     await use(startPage);
   },

@@ -13,7 +13,7 @@ export abstract class BasePage {
     async verifyPageAsync<T extends BasePage>(func: () => T): Promise<T> {
 
         // should be on the correct page
-        console.log(`Navigating to page with Title:  ${this.pageTitle}`);
+        console.log(`Navigating to page with title: "${this.pageTitle}"`);
 
         // Execute the provided function (create instance of next page)
         const nextPage = func();
@@ -21,7 +21,7 @@ export abstract class BasePage {
         // next page veification logic is executed after the page navigation is complete
         await nextPage.verifyPage();
 
-        console.log(`Navigated sucessfully to page with Title:  ${this.pageTitle}`);
+        console.log(`Navigated sucessfully to page with title: "${this.pageTitle}"`);
 
         // Return the verified page
         return nextPage;
