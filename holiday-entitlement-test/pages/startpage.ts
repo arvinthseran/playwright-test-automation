@@ -32,7 +32,7 @@ export class IrregularHrsPage extends BasePage {
     await this.page.getByRole('radio', { name: 'No' }).check();
     await this.page.getByRole('button', { name: 'Continue' }).click();
     return await this.verifyPageAsync(() => new HolidayBasedOnPage(this.page));
-  }
+  }  
 }
 
 export class HolidayBasedOnPage extends BasePage {
@@ -63,7 +63,100 @@ export class WorkOutHolidayPage extends BasePage {
         await this.page.getByRole('button', { name: 'Continue' }).click();
        return await this.verifyPageAsync(() => new NoOfDaysWorkedPage(this.page));
     }
+
+    async submitStartingPartway(): Promise<EmplStartDatePage> {
+        await this.page.getByRole('radio', { name: 'for someone starting part way' }).check();
+        await this.page.getByRole('button', { name: 'Continue' }).click();
+       return await this.verifyPageAsync(() => new EmplStartDatePage(this.page));
+    }
+
+    async submitLeavingPartway(): Promise<EmplEndDatePage> {
+        await this.page.getByRole('radio', { name: 'for someone leaving part way' }).check();
+        await this.page.getByRole('button', { name: 'Continue' }).click();
+       return await this.verifyPageAsync(() => new EmplEndDatePage(this.page));
+    }
+
+    async submitStartAndLeavingPartway(): Promise<EmplStartDatePage> {
+        await this.page.getByRole('radio', { name: 'for someone starting and' }).check();
+        await this.page.getByRole('button', { name: 'Continue' }).click();
+       return await this.verifyPageAsync(() => new EmplStartDatePage(this.page));
+    }
 }
+
+export class EmplStartDatePage extends BasePage {
+    constructor(page: Page) {
+        super(page, 'What was the employment start date?');
+    }
+    async verifyPage(): Promise<void> {
+       await expect(this.page.locator('h1')).toContainText(this.pageTitle);
+    }
+
+    private async EnterEmpStartDate(day : number, month: number, year: number): Promise<void> {
+        await this.page.getByRole('textbox', { name: 'Day' }).fill(day.toString());
+        await this.page.getByRole('textbox', { name: 'Month' }).fill(month.toString());
+        await this.page.getByRole('textbox', { name: 'Year' }).fill(year.toString());
+        await this.page.getByRole('button', { name: 'Continue' }).click();
+    }
+    async submitEmpStartDateAndGoToLeaveYearStartDate(day : number, month: number, year: number): Promise<LeaveYearStartDatePage> {
+        await this.EnterEmpStartDate(day, month, year);
+        return await this.verifyPageAsync(() => new LeaveYearStartDatePage(this.page));
+    }
+    async submitEmpStartDateAndGoToEmpEndDate(day : number, month: number, year: number): Promise<EmplEndDatePage> {
+        await this.EnterEmpStartDate(day, month, year);
+        return await this.verifyPageAsync(() => new EmplEndDatePage(this.page));
+    }
+}
+
+export class EmplEndDatePage extends BasePage {
+    constructor(page: Page) {
+        super(page, 'What was the employment end date?');
+    }
+    async verifyPage(): Promise<void> {
+       await expect(this.page.locator('h1')).toContainText(this.pageTitle);
+    }    
+    
+    private async EnterEmpEndDate(day : number, month: number, year: number): Promise<void> {
+        await this.page.getByRole('textbox', { name: 'Day' }).fill(day.toString());
+        await this.page.getByRole('textbox', { name: 'Month' }).fill(month.toString());
+        await this.page.getByRole('textbox', { name: 'Year' }).fill(year.toString());
+        await this.page.getByRole('button', { name: 'Continue' }).click();
+    }
+    
+    async submitEmpEndDateAndGoToLeaveYearStartDate(day : number, month: number, year: number): Promise<LeaveYearStartDatePage> {
+        await this.EnterEmpEndDate(day, month, year);
+        return await this.verifyPageAsync(() => new LeaveYearStartDatePage(this.page));
+    }
+
+    async submitEmpEndDateAndGoToNoOfDaysWorked(day : number, month: number, year: number): Promise<NoOfDaysWorkedPage> {
+        await this.EnterEmpEndDate(day, month, year);
+        return await this.verifyPageAsync(() => new NoOfDaysWorkedPage(this.page));
+    }
+
+    async submitEmpEndDateAndVerifyErrorMessage(day : number, month: number, year: number): Promise<void> {
+        let errormessage = `Your employment end date must be within 1 year of your start date`;
+        await this.EnterEmpEndDate(day, month, year);
+        await expect(this.page.getByRole('alert')).toContainText(errormessage);
+        await expect(this.page.getByRole('group')).toContainText(errormessage);
+    }
+}
+
+export class LeaveYearStartDatePage extends BasePage {
+    constructor(page: Page) {
+        super(page, 'When does the leave year start?');
+    }
+    async verifyPage(): Promise<void> {
+       await expect(this.page.locator('h1')).toContainText(this.pageTitle);
+    }
+ 
+    async submitLeaveYearStartDate(day : number, month: number, year: number): Promise<NoOfDaysWorkedPage> {
+        await this.page.getByRole('textbox', { name: 'Day' }).fill(day.toString());
+        await this.page.getByRole('textbox', { name: 'Month' }).fill(month.toString());
+        await this.page.getByRole('textbox', { name: 'Year' }).fill(year.toString());
+        await this.page.getByRole('button', { name: 'Continue' }).click();
+        return await this.verifyPageAsync(() => new NoOfDaysWorkedPage(this.page));
+    }
+}
+
 
 export class NoOfDaysWorkedPage extends BasePage {
     constructor(page: Page) {
