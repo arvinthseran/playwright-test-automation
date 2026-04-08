@@ -51,6 +51,11 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'accessibility',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: 'accessibility.spec.ts'
+    },
+    {
       name: 'smoke',
       use: { ...devices['Desktop Chrome'] },
       testMatch: 'smoke.spec.ts'
