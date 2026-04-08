@@ -39,6 +39,7 @@ steps:
     condition: succeededOrFailed()
 
   - task: PublishPipelineArtifact@1
+    displayName: 'Publish Playwright HJTML report'
     inputs:
       targetPath: '$(workingDir)/playwright-report'
       artifact: playwright-report
@@ -46,7 +47,8 @@ steps:
     condition: succeededOrFailed()
 
   - task: PublishPipelineArtifact@1
+    displayName: 'Publish Playwright traces'
+    condition: and(succeededOrFailed(), exists('$(workingDir)/playwright-traces'))
     inputs:
-      targetPath: playwright-traces
+      targetPath: '$(workingDir)/playwright-traces'
       artifact: traces
-
