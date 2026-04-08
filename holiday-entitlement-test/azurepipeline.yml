@@ -1,0 +1,46 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18'
+    displayName: 'Install Node.js'
+
+  - script: npm ci
+    displayName: 'Install dependencies'
+
+  - script: npx playwright install --with-deps chromium
+    displayName: 'Install Playwright Chromium browser'
+
+  - script: npx playwright test --grep regression 
+    displayName: 'Run Playwright tests'
+    env:
+      CI: 'true'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish test results'
+    inputs:
+      searchFolder: 'test-results'
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'results.xml'
+      mergeTestResults: true
+      failTaskOnFailedTests: true
+      testRunTitle: 'Playwright UI Tests'
+    condition: succeededOrFailed()
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: playwright-report
+      artifact: playwright-report
+      publishLocation: pipeline
+    condition: succeededOrFailed()
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: playwright-traces
+      artifact: traces
+
