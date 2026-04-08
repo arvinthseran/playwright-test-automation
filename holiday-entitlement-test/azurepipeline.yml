@@ -46,9 +46,17 @@ steps:
       publishLocation: pipeline
     condition: succeededOrFailed()
 
+  - script: |
+      if [ -d "$(workingDir)/playwright-traces" ]; then
+        echo "##vso[task.setvariable variable=tracesExist]true"
+      else
+        echo "No traces folder found"
+      fi
+    displayName: 'Check if traces folder exists'  
+
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Playwright traces'
-    condition: and(succeededOrFailed(), exists('$(workingDir)/playwright-traces'))
+    condition: and(succeededOrFailed(), eq(variables.tracesExist, 'true'))
     inputs:
       targetPath: '$(workingDir)/playwright-traces'
       artifact: traces
