@@ -4,19 +4,25 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  workingDir: ./holiday-entitlement-test
+
 steps:
-  - task: NodeTool@0
+  - task: UseNode@1
     inputs:
-      versionSpec: '18'
-    displayName: 'Install Node.js'
+      version: '18.x'
+    displayName: 'Install Node.js 18'
 
   - script: npm ci
+    workingDirectory: $(workingDir)
     displayName: 'Install dependencies'
 
   - script: npx playwright install --with-deps chromium
+    workingDirectory: $(workingDir)
     displayName: 'Install Playwright Chromium browser'
 
   - script: npx playwright test --grep regression 
+    workingDirectory: $(workingDir)
     displayName: 'Run Playwright tests'
     env:
       CI: 'true'
@@ -24,9 +30,9 @@ steps:
   - task: PublishTestResults@2
     displayName: 'Publish test results'
     inputs:
-      searchFolder: 'test-results'
+      searchFolder: '$(workingDir)/test-results'
       testResultsFormat: 'JUnit'
-      testResultsFiles: 'results.xml'
+      testResultsFiles: '**/*.xml'
       mergeTestResults: true
       failTaskOnFailedTests: true
       testRunTitle: 'Playwright UI Tests'
@@ -34,7 +40,7 @@ steps:
 
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: playwright-report
+      targetPath: '$(workingDir)/playwright-report'
       artifact: playwright-report
       publishLocation: pipeline
     condition: succeededOrFailed()
